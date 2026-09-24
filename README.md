@@ -1,7 +1,7 @@
 # forced-flows
 
-**Four pre-registered research ideas about Indian markets. All four closed. None produced a
-tradable edge.**
+**Four research ideas about Indian markets: three pre-registered, tested and closed, and one
+deliberately not pursued. None produced a tradable edge.**
 
 The ideas were about *forced* institutional flows — money that moves on a schedule or a rule
 rather than on a view. They are enumerated with their verdicts and the single number that decided
@@ -13,7 +13,8 @@ botched test. Three things do that work here, and they are what the repository i
 
 - **Pre-registration.** The hypothesis, the acceptance bar and the kill condition are committed to
   version control *before the script that tests them exists*, so the git history — not a claim in
-  a document — is the evidence of the order. All four are verifiably doc-before-script.
+  a document — is the evidence of the order. All three tested phases are verifiably
+  doc-before-script; the fourth, Phase 2b, never had a test designed.
 - **Blinded nuisance gates.** Phases 2 and 3 decide whether a test is worth running using only
   variance and correlation, with the effect itself made unreachable in code: the data layer
   returns mean-removed residuals, and every published figure passes through an allow-list writer
@@ -40,7 +41,9 @@ If a flow is large, predictable and price-insensitive, it may move the price in 
 participant could anticipate. **The question is whether any such effect is large enough for a
 retail participant to trade after costs.**
 
-The answer, for the four candidates tested: **no, or not decidably on the available data.**
+The answer, for the three candidates tested: **no, or not decidably on the available data.** A
+fourth, the ASM/GSM surveillance lists (Phase 2b), was not pursued: no test was designed and no data
+fetched, because every factor that bound Phase 2 is worse there.
 
 ## The method
 
