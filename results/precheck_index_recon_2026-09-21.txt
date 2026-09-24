@@ -1,0 +1,139 @@
+
+========================================================================================================
+precheck_index_recon.py -- PHASE 1 FEASIBILITY (index reconstitution, forced flows)
+========================================================================================================
+  run 2026-09-21T19:27:30Z
+  implements PRECHECK_INDEX_RECON.md as locked. Feasibility only:
+  no price data, no returns, no event study is run here.
+
+========================================================================================================
+PART B, STEP 1 -- THE BAR
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=1 notional, 1 valuation date]
+    delivery round-trip floor at Rs 100,000 notional, today's rates:
+      stt           20.0000 bps
+      stamp          1.5000 bps
+      dp             1.5340 bps
+      transaction    0.6140 bps
+      sebi           0.0200 bps
+      ipft           0.0000 bps
+      gst            0.1141 bps
+      brokerage      0.0000 bps
+      TOTAL         23.7821 bps
+    BAR = 3x floor = 71.3464 bps = 0.007135 in return units (0.7135%)
+    Rs 1 lakh is stated, not defaulted: DP is fixed rupees per sell, so
+    the bps floor falls as position size rises and the bar moves with it.
+
+========================================================================================================
+PART A -- DRY RUN. The MDE formula is checked by simulation before any
+inventory figure is read: an effect planted AT the computed MDE must be
+detected by the clustered test about 80% of the time, by definition of MDE.
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=1,000 simulations per row]
+        G   m     SD   rho       MDE   detected  expected  status
+       30   5   0.08   0.2   0.03164     79.2%       80%  PASS band [76.7%,83.3%]
+       60   5   0.08   0.2   0.02175     80.7%       80%  PASS band [76.7%,83.3%]
+      110   5   0.08   0.2   0.01587     78.0%       80%  PASS band [76.7%,83.3%]
+
+    rho=0 reduces to sd/sqrt(m): residual 6.94e-18  PASS
+    rho=1 reduces to sd (m events carry one event's information)  PASS
+
+  PART A: ALL CHECKS PASS
+
+========================================================================================================
+PART B, STEP 2 -- EVENT INVENTORY
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=243 equity announcements, 2017-03-07 -> 2026-09-15]
+    source: niftyindices.com press-release archive, DOM extraction, fetched 2026-09-21
+    persisted at: data/nse_index_recon_announcements_2026-09-21.csv
+    derived from the file and matching what was recorded at fetch: total 243, other-index 124,
+    candidates 119, distinct dates 110
+
+      year  releases  distinct dates
+      2017         3               3
+      2018         4               4
+      2019         6               5
+      2020        10              10
+      2021         9               9
+      2022        16              14
+      2023        15              15
+      2024        22              19
+      2025        18              16
+      2026        16              15  (partial year)
+     TOTAL       119             110
+
+    *** NOT SOURCED, AND NOT GUESSED: which of the three indices each
+    announcement touches, and how many stocks it adds. That is in the body
+    of 243 PDFs and was not parsed. Pre-2017 history is absent too --
+    the archive reaches to 1998 but earlier title conventions do not match
+    the extraction rule, so nothing is claimed for those years.
+
+    G enters the MDE as 1/sqrt(G), so OVERSTATING G overstates power.
+    Every index set below is therefore evaluated at G = 110, every
+    candidate date -- a GENEROUS UPPER BOUND. No single index can exceed it,
+    and the pooled set cannot either: pooled dates are a subset of the same
+    110, not the sum of three disjoint calendars.
+
+========================================================================================================
+PART B, STEP 3 -- CLUSTERED MDE GRID (additions only)
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=G 110 clusters, m 5 events/cluster assumed]
+  MDE = (t_.995,G-1 + t_.80,G-1) x SD x sqrt((1+(m-1)rho)/m) / sqrt(G)
+  bar = 0.7135%.  (*) marks the decisive cell (SD 8%, rho 0.2)
+
+        SD |         rho=0.0         rho=0.2         rho=0.4
+    -------+------------------------------------------------
+        5% |        0.739%         0.992%         1.192% 
+        8% |        1.183%         1.587%*        1.907% 
+       12% |        1.774%         2.380%         2.860% 
+
+    every cell is an MDE in per-event CAR; POWERED needs MDE <= 0.7135%
+
+========================================================================================================
+PART B, STEP 4 -- VERDICT PER INDEX SET
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=4 index sets, G=110 (upper bound), decisive cell SD 8% rho 0.2]
+    index set               G (bound)       MDE       bar  short by  verdict
+    NIFTY 50                      110    1.587%    0.713%     2.22x  UNDERPOWERED
+    NIFTY Next 50                 110    1.587%    0.713%     2.22x  UNDERPOWERED
+    NIFTY Midcap 150              110    1.587%    0.713%     2.22x  UNDERPOWERED
+    ALL THREE POOLED              110    1.587%    0.713%     2.22x  UNDERPOWERED
+
+    distinct announcement dates needed to reach the bar: 532
+    available (generous bound): 110.  At the 2025 rate of 16 dates/year
+    that is roughly 26 more years of announcements.
+
+========================================================================================================
+PART B, STEP 5 -- THE KILL CONDITION
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=4 index sets]
+  Locked in PRECHECK_INDEX_RECON.md before this script existed:
+
+    "Phase 1 closes if no index set, individually or pooled, has a clustered
+     MDE (p<0.01 two-sided, 80% power, t with G-1 df) at or below 3x the
+     delivery floor at Rs 1 lakh notional, under the middle SD and
+     intra-cluster correlation assumptions."
+
+    Every index set is UNDERPOWERED at the decisive cell, and the G used is
+    a generous upper bound -- the true G is smaller, so the true MDE is
+    larger. THE KILL CONDITION IS MET. PHASE 1 CLOSES.
+
+    The binding constraint is the number of independent ANNOUNCEMENT DATES,
+    not the number of stocks. Index reconstitution concentrates every
+    addition onto a handful of dates a year, so adding stocks to the sample
+    buys almost no power once they share a date.
+
+    Reported but NOT entering the verdict: the other eight grid cells.
+    Cells clearing the bar at G=110: none
+
+========================================================================================================
+END
+========================================================================================================
+  [precheck_index_recon.py | run 2026-09-21T19:27:30Z | n=243 announcements, G=110, 4 index sets]
+  wrote nothing. No price data was loaded and no event study was run.

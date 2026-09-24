@@ -1,0 +1,33 @@
+# GATE_SIP_TIMING.md -- permitted figures only.
+# Returns grouped by SIP status, either group's mean, their
+# difference, and any t or p on the real series are absent
+# BY CONSTRUCTION, not by omission.
+key,value
+bar_bps,16.9664
+df,128
+leak_attenuation,0.9
+m_other_mean,19.488372093023255
+m_other_median,20.0
+m_other_nonoverlap,16.0
+mde_bps,53.20459383931981
+mde_bps_nonoverlap,53.92692412223463
+mde_bps_true_effect,59.116215377022016
+mde_pct,0.005320459383931981
+n_days,2884
+n_events,129
+n_months,129
+n_sip_moved,42
+n_windows,2643
+power_check,0.803
+rho_1,0.6142849826377854
+rho_2,0.25716329721668074
+rho_3,0.02224899411191653
+sd_d,0.01746889328339935
+sd_d_nonoverlap,0.01770605909403808
+sd_window,0.016425250225040728
+sd_window_bps,164.25250225040728
+span_first,2016-01-01
+span_last,2026-09-17
+verdict,CLOSE_UNDERPOWERED
+vif,2.622301718773309
+vif_nonoverlap,2.5925865804349195

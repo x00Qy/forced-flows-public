@@ -1,0 +1,140 @@
+====================================================================================
+  INTERVAL-METHOD CALIBRATION -- chosen by simulated coverage alone
+====================================================================================
+
+  structure: 141 stocks, 1,781 entries (observed counts, largest 75), 499 weeks
+  500 trials/cell x 5,000 resamples, SD_true 5%, target coverage 90%
+  checkpoints: D:\YALGO\forced-flows\results\interval_cov
+  NO REAL DATA IS READ BY THIS SCRIPT.
+
+  ARMS
+    1  block-summary bootstrap vs materialised reference, same 300 draws: max |diff| 1.11e-16  PASS
+    2  delete-one-stock jackknife vs brute force, 4 stocks: max |diff| 5.55e-17  PASS
+    3  B (5,000) equals the gate's N_BOOT (5,000)  PASS
+    4  cell seeds are pure, phase-distinct and cell-distinct  PASS
+    5  same cell run twice gives identical coverage  PASS
+
+  ARMS: ALL PASS
+
+  PHASE 0 -- selection grid
+    cell rho_s 0.15 rho_w 0.10 done [16s] -> p0_rs150_rw100.json
+    cell rho_s 0.15 rho_w 0.15 done [16s] -> p0_rs150_rw150.json
+    cell rho_s 0.15 rho_w 0.25 done [16s] -> p0_rs150_rw250.json
+    cell rho_s 0.25 rho_w 0.10 done [16s] -> p0_rs250_rw100.json
+    cell rho_s 0.25 rho_w 0.15 done [16s] -> p0_rs250_rw150.json
+    cell rho_s 0.25 rho_w 0.25 done [16s] -> p0_rs250_rw250.json
+    cell rho_s 0.35 rho_w 0.10 done [16s] -> p0_rs350_rw100.json
+    cell rho_s 0.35 rho_w 0.15 done [16s] -> p0_rs350_rw150.json
+    cell rho_s 0.35 rho_w 0.25 done [16s] -> p0_rs350_rw250.json
+
+  COVERAGE OF THE ONE-SIDED 90% UPPER BOUND -- rho_stock
+    method                 0.15/0.10 0.15/0.15 0.15/0.25 0.25/0.10 0.25/0.15 0.25/0.25 0.35/0.10 0.35/0.15 0.35/0.25   worst   CP LB
+    --------------------------------------------------------------------------------------------------------------------------------
+    percentile 0.900 *        78.2%     75.6%     74.0%     75.2%     76.4%     75.0%     79.4%     75.4%     76.6%   74.0%   70.6%  fails
+    percentile 0.950          85.8%     83.4%     82.2%     83.2%     82.8%     84.0%     86.6%     80.6%     84.2%   80.6%   77.5%  fails
+    percentile 0.975          91.0%     87.6%     87.0%     87.4%     88.8%     90.8%     90.8%     87.6%     88.2%   87.0%   84.3%  fails
+    percentile 0.990          94.0%     91.8%     91.8%     91.0%     92.0%     93.8%     94.8%     91.2%     90.2%   90.2%   87.7%  fails
+    percentile 0.992          95.0%     92.6%     92.2%     91.6%     93.0%     94.6%     95.4%     91.2%     90.8%   90.8%   88.4%  fails
+    percentile 0.994          95.6%     93.4%     93.2%     92.8%     93.8%     95.0%     95.4%     91.2%     91.0%   91.0%   88.6%  fails
+    percentile 0.995          95.8%     93.6%     93.8%     93.2%     94.4%     95.8%     95.8%     92.0%     91.6%   91.6%   89.3%  fails
+    percentile 0.996          95.8%     94.0%     94.2%     93.8%     95.2%     96.6%     96.4%     92.6%     92.2%   92.2%   89.9%  fails
+    percentile 0.997          96.0%     95.0%     94.6%     93.8%     95.6%     97.0%     96.8%     92.8%     93.2%   92.8%   90.6%  OK
+    percentile 0.998          96.6%     95.4%     95.8%     94.4%     96.6%     97.0%     97.4%     94.0%     94.6%   94.0%   91.9%  OK
+    percentile 0.999          97.2%     96.8%     96.6%     95.0%     97.8%     98.0%     97.8%     94.8%     96.2%   94.8%   92.9%  OK
+    BCa 0.90                  83.2%     80.2%     77.2%     79.4%     80.2%     78.0%     82.8%     77.4%     79.0%   77.2%   73.9%  fails
+    BCa 0.95                  88.6%     86.4%     85.4%     84.4%     86.6%     88.0%     88.4%     83.6%     86.0%   83.6%   80.6%  fails
+    CP LB = one-sided 95% Clopper-Pearson lower bound on the WORST cell, n=500. The rule is CP LB >= 90%.
+    * = the ORIGINAL method, whole-stock resampling at the nominal level. Same thing.
+
+  COVERAGE OF THE ONE-SIDED 90% UPPER BOUND -- SD_event
+    method                 0.15/0.10 0.15/0.15 0.15/0.25 0.25/0.10 0.25/0.15 0.25/0.25 0.35/0.10 0.35/0.15 0.35/0.25   worst   CP LB
+    --------------------------------------------------------------------------------------------------------------------------------
+    percentile 0.900 *        84.6%     85.4%     84.6%     83.2%     83.2%     85.4%     83.2%     80.6%     84.0%   80.6%   77.5%  fails
+    percentile 0.950          92.2%     91.8%     89.4%     88.2%     88.8%     91.6%     89.6%     88.8%     89.8%   88.2%   85.6%  fails
+    percentile 0.975          94.8%     94.6%     92.4%     92.0%     94.2%     94.0%     93.6%     93.0%     91.8%   91.8%   89.5%  fails
+    percentile 0.990          97.2%     97.4%     95.6%     94.8%     96.4%     96.4%     95.8%     95.4%     94.8%   94.8%   92.9%  OK
+    percentile 0.992          97.8%     97.6%     96.0%     95.0%     96.8%     97.2%     96.0%     96.2%     95.4%   95.0%   93.1%  OK
+    percentile 0.994          97.8%     98.2%     97.0%     96.0%     97.6%     97.8%     96.2%     96.4%     96.0%   96.0%   94.2%  OK
+    percentile 0.995          97.8%     98.2%     97.8%     96.0%     98.4%     97.8%     96.8%     96.8%     96.6%   96.0%   94.2%  OK
+    percentile 0.996          98.0%     98.4%     98.0%     96.2%     98.6%     98.0%     97.2%     97.2%     96.8%   96.2%   94.5%  OK
+    percentile 0.997          98.2%     98.4%     98.2%     96.8%     99.0%     98.4%     97.6%     97.8%     97.2%   96.8%   95.2%  OK
+    percentile 0.998          98.2%     98.8%     98.2%     97.2%     99.2%     98.4%     97.8%     98.0%     98.2%   97.2%   95.7%  OK
+    percentile 0.999          98.6%     99.2%     99.0%     98.0%     99.2%     99.2%     98.4%     98.6%     99.0%   98.0%   96.6%  OK
+    BCa 0.90                  85.4%     86.8%     85.4%     84.6%     85.2%     87.2%     86.6%     83.4%     86.4%   83.4%   80.4%  fails
+    BCa 0.95                  92.8%     92.4%     89.8%     89.6%     91.0%     92.2%     92.2%     90.8%     90.8%   89.6%   87.1%  fails
+    CP LB = one-sided 95% Clopper-Pearson lower bound on the WORST cell, n=500. The rule is CP LB >= 90%.
+    * = the ORIGINAL method, whole-stock resampling at the nominal level. Same thing.
+
+  SELECTION -- smallest q whose WORST-CELL 95% CP lower bound clears 90%, on BOTH parameters
+    percentile 0.900       CP LB rho  70.6%  SD  77.5%  ->  70.6%   rejected
+    percentile 0.950       CP LB rho  77.5%  SD  85.6%  ->  77.5%   rejected
+    percentile 0.975       CP LB rho  84.3%  SD  89.5%  ->  84.3%   rejected
+    percentile 0.990       CP LB rho  87.7%  SD  92.9%  ->  87.7%   rejected
+    percentile 0.992       CP LB rho  88.4%  SD  93.1%  ->  88.4%   rejected
+    percentile 0.994       CP LB rho  88.6%  SD  94.2%  ->  88.6%   rejected
+    percentile 0.995       CP LB rho  89.3%  SD  94.2%  ->  89.3%   rejected
+    percentile 0.996       CP LB rho  89.9%  SD  94.5%  ->  89.9%   rejected
+    percentile 0.997       CP LB rho  90.6%  SD  95.2%  ->  90.6%   ELIGIBLE  <- smallest, chosen
+    percentile 0.998       CP LB rho  91.9%  SD  95.7%  ->  91.9%   ELIGIBLE
+    percentile 0.999       CP LB rho  92.9%  SD  96.6%  ->  92.9%   ELIGIBLE
+    BCa 0.90               CP LB rho  73.9%  SD  80.4%  ->  73.9%   rejected
+    BCa 0.95               CP LB rho  80.6%  SD  87.1%  ->  80.6%   rejected
+
+  PHASE 1 -- FRESH-SEED VERIFICATION (independent streams)
+    cell rho_s 0.15 rho_w 0.10 done [16s] -> p1_rs150_rw100.json
+    cell rho_s 0.15 rho_w 0.15 done [16s] -> p1_rs150_rw150.json
+    cell rho_s 0.15 rho_w 0.25 done [16s] -> p1_rs150_rw250.json
+    cell rho_s 0.25 rho_w 0.10 done [16s] -> p1_rs250_rw100.json
+    cell rho_s 0.25 rho_w 0.15 done [16s] -> p1_rs250_rw150.json
+    cell rho_s 0.25 rho_w 0.25 done [17s] -> p1_rs250_rw250.json
+    cell rho_s 0.35 rho_w 0.10 done [16s] -> p1_rs350_rw100.json
+    cell rho_s 0.35 rho_w 0.15 done [16s] -> p1_rs350_rw150.json
+    cell rho_s 0.35 rho_w 0.25 done [16s] -> p1_rs350_rw250.json
+
+  COVERAGE OF THE ONE-SIDED 90% UPPER BOUND -- rho_stock  [FRESH SEED]
+    method                 0.15/0.10 0.15/0.15 0.15/0.25 0.25/0.10 0.25/0.15 0.25/0.25 0.35/0.10 0.35/0.15 0.35/0.25   worst   CP LB
+    --------------------------------------------------------------------------------------------------------------------------------
+    percentile 0.900 *        76.8%     72.8%     76.2%     74.2%     76.6%     75.6%     73.0%     74.0%     75.0%   72.8%   69.3%  fails
+    percentile 0.950          83.4%     80.0%     84.4%     81.8%     83.6%     82.2%     81.4%     82.6%     80.0%   80.0%   76.8%  fails
+    percentile 0.975          88.8%     86.2%     88.4%     88.0%     87.6%     87.0%     86.8%     87.0%     85.6%   85.6%   82.8%  fails
+    percentile 0.990          92.2%     91.0%     92.4%     91.6%     90.8%     90.6%     90.2%     91.0%     89.2%   89.2%   86.6%  fails
+    percentile 0.992          93.2%     91.6%     93.4%     92.2%     92.0%     92.2%     91.4%     92.0%     90.4%   90.4%   88.0%  fails
+    percentile 0.994          94.2%     92.8%     94.0%     94.0%     93.0%     93.6%     93.0%     93.2%     91.6%   91.6%   89.3%  fails
+    percentile 0.995          94.4%     93.8%     94.6%     94.2%     93.4%     94.0%     93.8%     93.2%     92.4%   92.4%   90.2%  OK
+    percentile 0.996          95.2%     94.2%     95.4%     95.0%     94.0%     94.0%     94.2%     94.0%     92.8%   92.8%   90.6%  OK
+    percentile 0.997          96.0%     94.6%     95.8%     95.8%     94.4%     94.8%     95.8%     94.8%     93.6%   93.6%   91.5%  OK
+    percentile 0.998          96.2%     96.0%     96.0%     96.0%     96.2%     95.4%     96.0%     95.2%     95.0%   95.0%   93.1%  OK
+    percentile 0.999          97.2%     96.8%     97.4%     97.2%     96.4%     96.6%     97.0%     96.2%     95.6%   95.6%   93.8%  OK
+    BCa 0.90                  80.0%     76.8%     79.8%     78.6%     78.8%     78.4%     76.4%     77.4%     77.8%   76.4%   73.1%  fails
+    BCa 0.95                  87.0%     83.0%     87.2%     85.2%     85.6%     85.2%     83.8%     84.4%     83.0%   83.0%   80.0%  fails
+    CP LB = one-sided 95% Clopper-Pearson lower bound on the WORST cell, n=500. The rule is CP LB >= 90%.
+    * = the ORIGINAL method, whole-stock resampling at the nominal level. Same thing.
+
+  COVERAGE OF THE ONE-SIDED 90% UPPER BOUND -- SD_event   [FRESH SEED]
+    method                 0.15/0.10 0.15/0.15 0.15/0.25 0.25/0.10 0.25/0.15 0.25/0.25 0.35/0.10 0.35/0.15 0.35/0.25   worst   CP LB
+    --------------------------------------------------------------------------------------------------------------------------------
+    percentile 0.900 *        84.4%     83.2%     85.4%     81.4%     84.8%     84.0%     80.2%     82.8%     80.6%   80.2%   77.0%  fails
+    percentile 0.950          91.8%     90.4%     90.6%     88.2%     89.8%     89.4%     88.8%     89.0%     87.4%   87.4%   84.7%  fails
+    percentile 0.975          94.4%     94.8%     94.2%     92.6%     93.8%     92.6%     92.6%     92.0%     91.8%   91.8%   89.5%  fails
+    percentile 0.990          96.4%     97.4%     96.8%     96.4%     96.4%     94.8%     96.2%     94.2%     95.0%   94.2%   92.2%  OK
+    percentile 0.992          97.2%     97.8%     97.4%     97.0%     96.8%     95.0%     97.0%     94.8%     95.4%   94.8%   92.9%  OK
+    percentile 0.994          97.4%     98.4%     98.0%     97.6%     97.8%     96.2%     97.2%     95.4%     95.8%   95.4%   93.5%  OK
+    percentile 0.995          97.6%     98.4%     98.0%     97.8%     98.0%     96.6%     97.6%     95.6%     96.0%   95.6%   93.8%  OK
+    percentile 0.996          98.0%     99.0%     98.4%     98.2%     98.2%     97.0%     97.8%     96.2%     96.2%   96.2%   94.5%  OK
+    percentile 0.997          98.6%     99.0%     98.6%     98.4%     98.6%     97.4%     98.0%     96.4%     96.2%   96.2%   94.5%  OK
+    percentile 0.998          99.0%     99.2%     98.8%     98.8%     99.0%     97.6%     98.6%     96.8%     97.4%   96.8%   95.2%  OK
+    percentile 0.999          99.2%     99.4%     99.2%     99.0%     99.0%     98.2%     99.2%     97.8%     98.4%   97.8%   96.4%  OK
+    BCa 0.90                  86.6%     85.2%     86.2%     84.0%     85.6%     85.6%     82.6%     85.8%     82.2%   82.2%   79.1%  fails
+    BCa 0.95                  93.0%     91.6%     91.6%     89.2%     91.6%     90.8%     90.0%     90.6%     88.8%   88.8%   86.2%  fails
+    CP LB = one-sided 95% Clopper-Pearson lower bound on the WORST cell, n=500. The rule is CP LB >= 90%.
+    * = the ORIGINAL method, whole-stock resampling at the nominal level. Same thing.
+
+  'percentile 0.997' ON THE FRESH SEED, same criterion:
+    rho_stock  worst cell 93.6%   95% CP LB 91.5%
+    SD_event   worst cell 96.2%   95% CP LB 94.5%
+    CONFIRMED
+
+====================================================================================
+  CANDIDATE: percentile 0.997   B = 5,000   fresh-seed CP LB 91.5%
+  Nothing is adopted by this script. The choice is reported for review.
+====================================================================================

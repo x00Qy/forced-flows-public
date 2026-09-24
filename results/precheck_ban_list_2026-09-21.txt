@@ -1,0 +1,113 @@
+
+========================================================================================================
+precheck_ban_list.py -- PHASE 2 FEASIBILITY (F&O ban list, forced flows)
+========================================================================================================
+  run 2026-09-21T19:53:10Z
+  implements PRECHECK_BAN_LIST.md as locked. Feasibility only:
+  no price data, no returns, no event study is run here.
+
+========================================================================================================
+PART B, STEP 1 -- THE BAR
+========================================================================================================
+
+  [precheck_ban_list.py | run 2026-09-21T19:53:10Z | n=1 notional, 1 valuation date]
+    delivery round-trip floor at Rs 100,000: 23.7821 bps
+    BAR = 3x floor = 71.3464 bps = 0.7135%  (same bar as Phase 1)
+
+========================================================================================================
+PART B, STEP 2 -- BAN-LIST INVENTORY
+========================================================================================================
+
+  [precheck_ban_list.py | run 2026-09-21T19:53:10Z | n=2,893 archived trading days, 1,781 entries]
+    source: NSE archives, fo_secban daily files, nsearchives.nseindia.com/archives/fo/sec_ban/
+    committed input: fo_secban_2015_2026.csv (2,893 archived trading days)
+    raw per-day cache kept on disk at data/fo_secban/, gitignored
+    archived span: 2015-01-01 -> 2026-09-21
+
+    AN EVENT IS AN ENTRY, NOT A BAN-DAY:
+      stocks in ban on a typical day (mean over days) :     3.23
+      NEW ENTRIES per day (mean over days)            :     0.62
+      ratio                                           :     5.24x
+      -- counting ban-days rather than entries would inflate n by
+         about that factor, which is the mean ban duration.
+
+      year  entries  entry dates  mean/date  max/date
+      2015       69           61       1.13         3
+      2016      136           94       1.45         3
+      2017      287          170       1.69         6
+      2018      162          115       1.41         4
+      2019       86           65       1.32         3
+      2020      178          102       1.75         9
+      2021      162          118       1.37         4
+      2022      100           81       1.23         3
+      2023      193          128       1.51         5
+      2024      289          166       1.74         4
+      2025       93           80       1.16         3
+      2026       26           23       1.13         2
+     TOTAL    1,781        1,203       1.48         9
+
+    G = 1,203 distinct entry dates.  m = 1.48 entries per date, MEASURED.
+    The first archived day cannot yield entries (no t-1) and is excluded.
+    1 entries follow an archive gap of >4 days, where a missing
+    t-1 can manufacture a spurious entry. Reported, not removed.
+
+========================================================================================================
+PART A -- DRY RUN. The MDE formula is checked by simulation before any
+inventory figure is read: an effect planted AT the computed MDE must be
+detected by the clustered test about 80% of the time, by definition of MDE.
+========================================================================================================
+
+  [precheck_index_recon.py | run 2026-09-21T19:53:10Z | n=1,000 simulations per row]
+        G   m     SD   rho       MDE   detected  expected  status
+      300   1   0.05   0.2   0.00992     79.8%       80%  PASS band [76.7%,83.3%]
+      601   1   0.05   0.2   0.00699     78.2%       80%  PASS band [76.7%,83.3%]
+     1203   1   0.05   0.2   0.00493     79.4%       80%  PASS band [76.7%,83.3%]
+
+    rho=0 reduces to sd/sqrt(m): residual 6.94e-18  PASS
+    rho=1 reduces to sd (m events carry one event's information)  PASS
+
+  PART A: ALL CHECKS PASS
+
+========================================================================================================
+PART B, STEP 3 -- CLUSTERED MDE GRID (entries only, window [+1,+5])
+========================================================================================================
+
+  [precheck_ban_list.py | run 2026-09-21T19:53:10Z | n=G 1,203 entry dates, m 1.48 entries/date (measured)]
+  bar = 0.7135%.  (*) marks the decisive cell (SD 5%, rho 0.2)
+
+        SD |         rho=0.0         rho=0.2         rho=0.4
+    -------+------------------------------------------------
+        3% |        0.243%         0.255%         0.266% 
+        5% |        0.405%         0.424%*        0.443% 
+        8% |        0.649%         0.679%         0.708% 
+
+========================================================================================================
+PART B, STEP 4 -- THE KILL CONDITION
+========================================================================================================
+
+  [precheck_ban_list.py | run 2026-09-21T19:53:10Z | n=G 1,203, m 1.48, decisive cell SD 5% rho 0.2]
+  Locked in PRECHECK_BAN_LIST.md before this script existed:
+
+    "Phase 2 (ban list) closes if the clustered MDE (p<0.01 two-sided,
+     80% power, t with G-1 df) exceeds 3x the delivery floor at Rs 1 lakh
+     notional at the middle SD and intra-cluster correlation cell, using
+     the sourced count of distinct ban-entry dates as G."
+
+    MDE at the decisive cell      0.4244%
+    bar                           0.7135%
+    ratio                           0.59x
+    entry dates needed to reach the bar: 428   available: 1,203
+
+    THE KILL CONDITION DOES NOT FIRE. Phase 2 is POWERED at the decisive
+    cell: a test on these events could resolve an effect the size that
+    would matter. That is NOT a result -- no effect has been measured and
+    none is claimed. It means a pre-registration for the test itself is
+    the next step, with its own hypothesis, window and bar.
+
+    Cells clearing the bar: [(0.03, 0.0), (0.03, 0.2), (0.03, 0.4), (0.05, 0.0), (0.05, 0.2), (0.05, 0.4), (0.08, 0.0), (0.08, 0.2), (0.08, 0.4)]
+
+========================================================================================================
+END
+========================================================================================================
+  [precheck_ban_list.py | run 2026-09-21T19:53:10Z | n=1,781 entries, G=1,203, 2,893 archived days]
+  wrote nothing. No price data was loaded and no event study was run.

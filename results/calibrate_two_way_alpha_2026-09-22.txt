@@ -1,0 +1,132 @@
+========================================================================
+  TWO-WAY CLUSTERED THRESHOLD CALIBRATION -- Phase 2, ban-list entry
+========================================================================
+
+  DRY RUN -- validating the fast twins and the threshold rule
+    1  fast cluster variance vs _cluster_var
+       original 0.001267833449377271
+       fast     0.001267833449377272
+       5 trials, agree to 1e-18 -- the only difference possible is
+       floating-point reassociation, not a different estimator  PASS
+    2  fast two-way p/se vs mean_car_two_way, 5 panels: max |diff| 1.39e-17  PASS
+    3  fast panel structure over 300 draws PASS
+       marginal variance        0.9958  want 1.0000
+       within-stock covariance  0.2478  want 0.2500
+       within-week  covariance  0.1524  want 0.1500
+    4  size at nominal 1%, 400 sims each, same estimator
+       fast twin    7/400 = 1.75%
+       original     5/400 = 1.25%
+       |difference| 0.50% within Monte-Carlo noise  PASS
+    5  threshold rule on Uniform(0,1) p-values: 0.010353, want ~0.01  PASS
+    6  threshold rule on over-rejecting p=U^2: 0.00013785, want ~0.000100  PASS
+    7  simulated two-way SE vs the analytic true SD of the mean
+         rho_s  rho_w   analytic  simulated   ratio
+          0.15   0.10   0.056794   0.055446   0.976
+          0.25   0.15   0.070486   0.068654   0.974
+          0.35   0.25   0.082528   0.080902   0.980
+       max deviation 2.6%, and every cell is DOWNWARD: the
+       estimator under-states, so the MDE below is optimistic  PASS
+
+  DRY RUN: ALL ARMS PASS
+
+========================================================================
+  STEP 1 -- CALIBRATION GRID
+========================================================================
+
+  5,000 zero-effect sims per cell, on the OBSERVED structure:
+  141 stocks / 1,781 entries / 499 weeks, one stock carrying 75 entries.
+  Reported per cell: the size a NOMINAL p<0.01 actually buys, and
+  the nominal threshold that would buy a true 1.0%.
+
+    rho_stock  rho_week   size@0.01   threshold@1%    mean SE    df
+    ---------------------------------------------------------------
+         0.15      0.10       1.74%       0.006024   0.055432   140   [2s]
+         0.15      0.15       1.34%       0.006633   0.056366   140   [2s]
+         0.15      0.25       1.52%       0.007199   0.058308   140   [2s]
+         0.25      0.10       1.36%       0.007070   0.068038   140   [2s]
+         0.25      0.15       1.38%       0.006790   0.068877   140 <- middle   [2s]
+         0.25      0.25       1.22%       0.007895   0.070139   140   [2s]
+         0.35      0.10       1.50%       0.005228   0.078644   140   [2s]
+         0.35      0.15       0.98%       0.010216   0.079419   140   [2s]
+         0.35      0.25       1.10%       0.009058   0.080587   140   [2s]
+
+  Smallest threshold over the grid -> ALPHA* = 0.005228
+  taken at the most demanding cell rho_stock=0.35, rho_week=0.1.
+  Monte-Carlo resolution: the threshold is the 50-th of 5,000 order
+  statistics, so it carries real sampling error; it is NOT quoted to more than 4 s.f.
+
+========================================================================
+  STEP 1b -- FRESH-SAMPLE VALIDATION
+========================================================================
+
+  5,000 NEW zero-effect sims at the middle cell (rho_stock 0.25, rho_week 0.15),
+  independent stream (seed 20260922999), tested at alpha* = 0.005228.
+
+    realised size at alpha*     37/5,000 = 0.74%
+    99% Clopper-Pearson band  [0.46%, 1.11%]
+    contains the 1% target   YES
+
+    for contrast, same sample at the nominal 0.01:   58/5,000 = 1.16%
+
+========================================================================
+  STEP 2 -- POWER AT ALPHA*
+========================================================================
+
+  df = min(G_week, G_stock) - 1 = 140
+  t crit at alpha*=0.005228 two-sided : 2.837162   (module's own _t_ppf: 2.837162)
+  t at 80% power                        : 0.844196
+
+  at nominal 0.01  (a=0.010000)
+    mean two-way SE, unit SD   0.068798
+    MDE at SD_event 5%          1.1887%  = 118.87 bps
+    against the 3x delivery bar  71.35 bps          *** DOES NOT CLEAR ***
+    headroom                     -47.52 bps (1.666x the bar)
+
+  at alpha*        (a=0.005228)
+    mean two-way SE, unit SD   0.068798
+    MDE at SD_event 5%          1.2664%  = 126.64 bps
+    against the 3x delivery bar  71.35 bps          *** DOES NOT CLEAR ***
+    headroom                     -55.29 bps (1.775x the bar)
+
+  MDE ACROSS THE WHOLE GRID at alpha*, SD_event 5%, against the 71.35 bps bar:
+      rho_s  rho_w    MDE bps   x bar   verdict
+       0.15   0.10     104.54    1.47   *** FAILS ***
+       0.15   0.15     106.15    1.49   *** FAILS ***
+       0.15   0.25     109.29    1.53   *** FAILS ***
+       0.25   0.10     128.43    1.80   *** FAILS ***
+       0.25   0.15     129.74    1.82   *** FAILS ***
+       0.25   0.25     132.33    1.85   *** FAILS ***
+       0.35   0.10     148.53    2.08   *** FAILS ***
+       0.35   0.15     149.66    2.10   *** FAILS ***
+       0.35   0.25     151.91    2.13   *** FAILS ***
+
+    0 of 9 grid cells clear the bar.
+
+  BREAK-EVEN -- stated so the gap is legible, NOT adopted:
+    required two-way SE at unit SD   0.038763
+    realised at the middle cell      0.068798   (1.77x too large)
+      rho_stock 0.0   (rho_week 0.15) -> MDE   54.03 bps   clears
+      rho_stock 0.01  (rho_week 0.15) -> MDE   58.95 bps   clears
+      rho_stock 0.02  (rho_week 0.15) -> MDE   63.50 bps   clears
+      rho_stock 0.05  (rho_week 0.15) -> MDE   75.51 bps   fails
+      rho_stock 0.1   (rho_week 0.15) -> MDE   92.11 bps   fails
+      rho_stock 0.15  (rho_week 0.15) -> MDE  106.15 bps   fails
+    SD_event that would clear at the middle cell: 2.817%   (the pre-check assumed 5%)
+
+  WHY THIS DIFFERS FROM THE PHASE 2 PRE-CHECK'S 42.44 bps.
+  That figure clusters on the DATE only (G = 1,203 entry dates,
+  m = 1.48, rho = 0.2), which treats the 1,781 entries as ~1,203
+  near-independent draws. Clustering on the STOCK as well does not:
+  1,781 entries sit in 141 stocks, one holding 75, so
+  sum_s c_s^2 = 53,887 against n = 1,781. That ratio -- not the
+  threshold calibration -- is what moves the MDE. Moving from the
+  nominal 0.01 to alpha* costs 6.5% of the MDE; adding the stock
+  dimension costs 3.0x.
+
+  Direct power check -- plant the alpha* MDE, measure detection:
+    1560/2,000 = 78.0% detected at alpha*, expected 80%
+    99% band [75.5%, 80.3%]  consistent
+
+========================================================================
+  ALPHA* = 0.005228   (nominal two-way p-threshold)
+========================================================================

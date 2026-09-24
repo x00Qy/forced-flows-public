@@ -1,0 +1,41 @@
+MIT License
+
+Copyright (c) 2026 Yug Kulshreshtha
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------
+
+NOT COVERED BY THIS LICENCE
+
+1. MARKET DATA. No market data is included in this repository, and the licence
+   above grants no rights over any. The scripts here FETCH data from NSE, NSE
+   Indices and AMFI at runtime; that data remains subject to its publishers'
+   own terms, which prohibit redistribution:
+
+       NSE, Website Policies        https://www.nseindia.com/website-policies
+       NSE Indices, Terms of Use    https://www.niftyindices.com/terms-of-use
+
+   Fetching it for your own use is between you and them. Nothing here permits
+   you to republish it.
+
+2. NO INVESTMENT ADVICE. This is a record of research that found no tradable
+   effect. It is not advice, not a recommendation, and not a claim that any
+   figure here is fit for any purpose. Every phase document states its own
+   "what would make this wrong" conditions; they travel with the numbers.

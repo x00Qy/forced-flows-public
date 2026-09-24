@@ -1,0 +1,38 @@
+# GATE_BAN_LIST_NUISANCE.md -- permitted figures only.
+# Every key here is on gate_ban_list_nuisance.ALLOWED. The
+# mean CAR, any t-statistic and any p-value on real data are
+# absent BY CONSTRUCTION, not by omission.
+key,value
+alpha_star,0.00917754418644864
+bar_bps,71.35
+df,139
+max_stock_count,64
+mde_bps,120.41992557040315
+mde_pct,0.012041992557040315
+n_after_exdate,1580
+n_after_nifty_gap,1568
+n_after_prices,1568
+n_after_same_stock,1625
+n_dropped_exdate,45
+n_dropped_missing_price,0
+n_dropped_nifty_gap,12
+n_dropped_same_stock,156
+n_entries_raw,1781
+n_extreme_daily,18
+n_nifty_gap_days,9
+n_stocks,140
+n_weeks,483
+power_check,0.803
+rho_stock_hat,-0.002880782353234339
+rho_stock_upper,0.018357306909734087
+rho_week_hat,0.1713370389435987
+rho_week_upper,0.3159001369989605
+sd_event_hat,0.07749962980882079
+sd_event_upper,0.09527395643415737
+se_two_way_analytic,0.03675547808778065
+se_two_way_sim,0.03625156112446424
+size_at_alpha_star,0.0107
+size_hi,0.012719271608792836
+size_lo,0.0089176765578668
+sum_c2,40454
+verdict,CLOSE_UNDERPOWERED

@@ -1,0 +1,31 @@
+# forced-flows runtime dependencies.
+#
+# Pinned to the versions the committed results/ files were produced with, so a
+# re-run that disagrees is a real disagreement and not a library version drift.
+#
+# VERIFIED 2026-09-22: a clean virtualenv resolving numpy 2.5.3 / scipy 1.18.1
+# reproduced every committed result byte-identically apart from the run
+# timestamp. The pins below are therefore known-good rather than load-bearing.
+
+numpy==2.4.6
+scipy==1.18.0
+
+# pypdf reads AMFI's Monthly Note PDFs, which are the ONLY machine-readable
+# source for the monthly SIP contribution series (PRECHECK_SIP_TIMING.md s4).
+# Verified text-bearing, not scanned.
+pypdf==6.16.1
+
+# NOT REQUIRED, and recorded so nobody adds them back:
+#   xlrd, openpyxl -- AMFI serves its monthly report as OLE2 .xls in some
+#   months and OOXML .xlsx in others, both under a .xls extension. That path
+#   was explored and ABANDONED: the report carries SIP columns only in
+#   Aug-2026, so it is not a series. No committed script imports either
+#   package. An earlier revision of this file listed both in error.
+
+# yalgo_core is a SIBLING REPOSITORY, not a PyPI package. Install it editable:
+#     pip install -e ../yalgo-core
+# mypy cannot follow a PEP 660 editable install, so type-checking also needs
+# MYPYPATH=/path/to/yalgo-core. See SETUP.md.
+
+# Development only.
+# mypy==2.2.0

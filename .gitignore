@@ -1,0 +1,17 @@
+# NO DATA FILE IS EVER COMMITTED TO THIS REPOSITORY.
+#
+# NSE and NSE Indices both prohibit redistribution of their data in writing
+# (see the data note in README.md). Every input here is fetched at runtime by
+# a script in src/ and cached locally.
+#
+# The whole data/ tree is excluded rather than a list of known filenames, so a
+# new input added later cannot reach a commit by someone forgetting to update
+# this file. That is the difference between this and the private repository's
+# .gitignore, which named five cache directories and left the derived CSVs
+# tracked.
+data/
+
+__pycache__/
+*.pyc
+*.egg-info/
+.mypy_cache/

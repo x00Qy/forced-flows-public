@@ -1,0 +1,70 @@
+
+  DRY RUN -- planted components, before any real data is read
+    1  two_way_p vs mean_car_two_way: max |diff| 8.67e-19  PASS
+    2  method-of-moments recovery, 300 draws per cell
+         rho_s  rho_w     SD  rho_s_hat  rho_w_hat    SD_hat
+          0.02   0.15   0.05     0.0151     0.1453    0.0500
+          0.15   0.15   0.05     0.1503     0.1408    0.0500
+          0.25   0.15   0.05     0.2414     0.1444    0.0499
+          0.35   0.15   0.05     0.3381     0.1461    0.0497
+       worst |rho_hat - rho| 0.0130 (< 0.02), worst SD error 0.73% (< 2%)  PASS
+    3  at PLANTED ZERO: rho_s_hat -0.00045, rho_w_hat -0.00351, both |.| < 0.01  PASS
+    4  bound at q=0.997 on the OBSERVED structure, 120 draws: rho_stock 90.0%, SD 97.5%
+       (smoke test -- the 500-trial grid is in ADDENDUM_01)  PASS
+    5  mean-removal bias in rho_stock: -0.00744 (downward = anti-conservative, absorbed by ARM 4's bound)
+    6  disjointness check fires on a planted same-stock/same-week pair  PASS
+    7  emit() refuses 'mean_car' and accepts 'rho_stock_hat'  PASS
+    8  mean-removed residuals sum to -4.441e-16  PASS
+
+  DRY RUN: ALL ARMS PASS
+==========================================================================
+  GATE -- blinded nuisance parameters, Phase 2 ban-list entry
+  executes GATE_BAN_LIST_NUISANCE.md
+==========================================================================
+
+  ASSEMBLING THE EVENT SET
+    loading bhavcopy for 2,893 archived days ...
+      read 500/2,893 bhavcopy days
+      read 1,000/2,893 bhavcopy days
+      read 1,500/2,893 bhavcopy days
+      read 2,000/2,893 bhavcopy days
+      read 2,500/2,893 bhavcopy days
+    trading calendar: 2,893 days with cached bhavcopy
+    raw entries                        1,781
+    dropped, 5-day same-stock rule       156
+    dropped, ex-date in D+1..D+4          45
+    dropped, window touches one of the 9 NIFTY 500 gap days  12
+    dropped, missing price/benchmark       0
+    KEPT                               1,568   in 140 stocks and 483 ISO weeks
+    largest stock block 64,  sum c_s^2 40,454
+    extreme daily returns (>|20%|) inside kept windows: 18  -- logged, never excluded
+
+  NUISANCE PARAMETERS (from mean-removed CARs)
+                         point   90% upper
+    rho_stock          -0.0029      0.0184
+    rho_week            0.1713      0.3159
+    SD_event           7.7500%     9.5274%
+    bounds target one-sided 90% COVERAGE, read at the calibrated
+    percentile q*=0.997 of a 5,000-resample cluster bootstrap (ADDENDUM_01)
+
+  RECALIBRATING alpha* at the bounded values (rho_stock 0.0184, rho_week 0.1713)
+    20,000 zero-effect sims on the REAL structure ...
+    alpha* = 0.009178   (df 139; a nominal 0.01 buys 1.08% here)
+    fresh 20,000-sim validation at alpha* ...
+    realised size 214/20,000 = 1.070%   99% CP [0.892%, 1.272%]   contains 1%
+
+  TWO-WAY STANDARD ERROR at the bounded values
+    simulated 0.036252   analytic 0.036755   ratio 0.986  agree
+
+  MDE AT alpha*, 80% POWER, SD_event at its upper bound
+    t crit 2.642348 + t power 0.844215
+    MDE  1.2042%  =  120.42 bps
+    bar  71.35 bps   (3 x 23.7821 bps delivery floor)
+    direct power check at that effect: 80.3% detected
+
+==========================================================================
+  VERDICT: CLOSE AS UNDERPOWERED -- MDE 120.42 bps > 71.35 bps
+  shortfall +49.07 bps (1.69x the bar)
+==========================================================================
+
+  wrote D:\YALGO\forced-flows\results\gate_ban_list_nuisance_2026-09-22.csv

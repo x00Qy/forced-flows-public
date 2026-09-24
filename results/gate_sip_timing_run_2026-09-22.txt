@@ -1,0 +1,64 @@
+============================================================================
+  GATE -- SIP timing power, blinded
+  executes GATE_SIP_TIMING.md
+============================================================================
+
+  DRY RUN -- planted SD and a known overlap structure
+    1  open(D)->close(D+2) on a known path: 0.030000, want 0.030000, 2 windows  PASS
+    2  overlap-only autocorrelation: rho_1 0.6634 (want 0.6667), rho_2 0.3238 (want 0.3333), rho_3 -0.0066 (want 0)  PASS
+    3  window SD 0.01379, want sqrt(3)*0.008 = 0.01386  PASS
+    4  VIF at m=18: 2.8727 (>1, overlap inflates), matches closed form  PASS
+       an m=18 mean of these windows carries the information of 6.3 independent ones
+    5  effect planted at the MDE detected 79.2% of 1,500 sims, want 80%  PASS
+    6  SIP calendar: picked [1, 3, 5], moved 2 forward; want [1, 3, 5] and 2  PASS
+       (Mar: 10th is a Sunday -> 11th; Apr: 10th trades; May: 10th absent -> 13th)
+    8  effect planted in DAILY returns of D..D+2 (0.0010/day):
+       SIP window moves   30.09 bps (= 3 x 10 bps, as it must)
+       leak into the 20 overlapping comparison windows   3.02 bps
+       leak into the 16 NON-overlapping ones   0.00 bps
+       measured difference is 0.900 of the true effect (clean: 1.000)
+       closed form 1-(L-1)/m_other = 0.900, matches  PASS
+       so ARM 5's difference-space planting OVERSTATES power: a true effect
+       must be 1/0.900 = 1.112x the measured MDE to be found.
+    7  emit() refuses 'sip_day_mean'  PASS
+
+  DRY RUN: ALL ARMS PASS
+
+  SAMPLE  (counts only -- no return is grouped)
+    index days                   2,884
+    3-session windows in scope   2,643   2016-01-01 -> 2026-09-17
+    months                         129
+    SIP events (the 10th)          129   42 moved forward to the next trading day
+    other-day windows/month       20.0 median, 19.5 mean
+
+  NUISANCE  (all days, every day a potential D)
+    SD of the 3-session return   0.016425  = 164.3 bps
+    autocorrelation  rho_1 +0.6143   rho_2 +0.2572   rho_3 +0.0222
+    (rho_1 and rho_2 are mechanical: consecutive 3-session windows share two days)
+
+  POWER  (p<0.01, 80%, clustered by month, df 128)
+    VIF 2.6223  -> an 20-window monthly mean carries the information of 7.6 independent windows
+    SD(d) 0.017469
+    MDE   0.5320%  =  53.20 bps
+    bar   16.9664 bps   (3 x 5.6555 bps futures statutory floor, slippage excluded)
+    direct power check at that effect: 80.3% detected
+
+  THE OVERLAP READING, SIDE BY SIDE
+    comparison group                    m_other     VIF     SD(d)   MDE bps
+    all other windows in the month         20.0  2.6223  0.017469     53.20
+    sharing no day with D..D+2             16.0  2.5926  0.017706     53.93
+    excluding the D-2..D+2 starts costs 4 comparison windows a month and moves the MDE by +0.72 bps.
+    Both readings fail the 16.9664 bps bar, so the verdict does not depend on which is used.
+
+  AND THE OVERLAP ALSO ATTENUATES THE EFFECT ITSELF
+    a true effect spread over D..D+2 leaks into the 2 comparison windows on each side,
+    so the measured difference is 0.900 of it (closed form 1-(L-1)/m_other, checked in ARM 8).
+    In TRUE-EFFECT terms the primary MDE is therefore 53.20/0.900 = 59.12 bps,
+    which is 3.48x the bar rather than 3.14x.
+
+============================================================================
+  VERDICT: CLOSE AS UNDERPOWERED -- MDE 53.20 bps > 16.9664 bps
+  shortfall +36.24 bps (3.14x the bar)
+============================================================================
+
+  wrote D:\YALGO\forced-flows\results\gate_sip_timing_2026-09-22.csv
