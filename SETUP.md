@@ -94,7 +94,11 @@ Run from the repository root. Scripts resolve paths relative to their own locati
 directory does not matter, but `src/` must be importable — running `python src/<name>.py` handles
 that.
 
-**Cheapest headline — the Phase 3 gate.** One input, under a minute:
+**Cheapest headline — the Phase 3 gate.** One input file, and the gate itself runs in under a
+minute — **but only once `data/nifty500_daily_2015_2026.csv` exists.** In this repository it is
+committed, so the first line below is a no-op. **In a fresh clone of the public repository it is
+absent**, and building it means `fetch_index_close.py` pulling ~2,900 daily index files, **roughly
+15 minutes** (§3's table). Budget for that, not for the minute.
 
 ```bash
 python src/fetch_index_close.py     # only if data/nifty500_daily_2015_2026.csv is absent

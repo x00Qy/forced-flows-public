@@ -98,7 +98,9 @@ to catch them, before any confirmatory test.
 
 ## Reproducing a headline result
 
-The Phase 3 gate is the cheapest to reproduce: one input file, under a minute, no bulk download.
+The Phase 3 gate is the cheapest to reproduce — **one input file, and the gate itself runs in
+under a minute.** Building that input is the slower part: `fetch_index_close.py` pulls ~2,900 daily
+index files from NSE's archive, **roughly 15 minutes**, throttled. It caches, so you pay it once.
 
 ```bash
 pip install -r requirements.txt
@@ -130,7 +132,7 @@ fetcher caches, so a slow run that finishes beats a fast one that gets blocked.
 |---|---|
 | **[`SETUP.md`](SETUP.md)** | install, where data must sit, how to regenerate it, running the scripts |
 | **[`RESULTS.md`](RESULTS.md)** | every phase, its verdict, and the one number that decided it |
-| **[`STANDING_RULES.md`](STANDING_RULES.md)** | four rules, each with the failure that produced it |
+| **[`STANDING_RULES.md`](STANDING_RULES.md)** | five rules, each with the failure that produced it |
 | **[`TEST_REGISTRY.csv`](TEST_REGISTRY.csv)** | append-only ledger of every verdict, with its reason |
 | `PRECHECK_INDEX_RECON.md` | Phase 1 pre-registration |
 | `PRECHECK_BAN_LIST.md` | Phase 2 pre-check (verdict later superseded) |
@@ -153,6 +155,18 @@ and both gate documents say so rather than claiming more.
 statistics and cost-model code, installed editable: `pip install -e ../yalgo-core`. Import it through `src/require_yalgo_core.py`,
 which turns a missing install into instructions. `mypy --strict` cannot follow editable installs
 and will report `import-not-found` for it; that error is expected.
+
+**What "P1" means in these documents.** Several files here — the pre-registrations and gate
+documents especially — refer to *P1*. That is the author's earlier options-research project: a
+separate repository, **not public**, whose cost model and closure audit this line borrowed method
+from. Where a document cites a file inside it, such as `spot_cost_model.py` or
+`PAPER_no_alpha_at_retail_cost_v2.md`, **that file is not reachable from here** and the citation is
+there because it is where the figure came from, not as something to follow.
+
+**Those citations are not edited out, deliberately.** The pre-registrations, gate documents and
+addenda are locked records — this repository's second methodological claim is that none of them is
+edited after the fact, and quietly rewriting them for publication would make that claim false. They
+are published exactly as they were committed, private references and all.
 
 **One input has no fetcher.** `data/nse_index_recon_announcements_2026-09-21.csv` is a DOM
 extraction from the niftyindices.com press-release archive, taken 2026-09-21.
@@ -220,9 +234,10 @@ output of every cited run is committed under `results/`, and the gates' validati
 synthetic and run offline — so the estimators can be exercised end to end with no downloads at
 all.
 
-To re-derive rather than read: Phase 3's inputs take about a minute to fetch. Phase 2's take
-roughly 40 minutes of throttled downloading. Phase 1's announcement inventory cannot be fetched at
-all (see Notes).
+To re-derive rather than read: Phase 3's input takes **roughly 15 minutes** to fetch (~2,900
+daily index files). Phase 2's take **roughly 40 minutes** on top of that, because the cash bhavcopy
+is ~2,900 zip archives. Phase 1's announcement inventory cannot be fetched at all (see Notes).
+Every fetcher caches and is resumable, so the cost is paid once.
 
 ### The audit behind the claim
 

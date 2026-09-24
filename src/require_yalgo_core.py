@@ -8,9 +8,9 @@ place that failure is turned into instructions.
 
 WHY A GUARD MODULE RATHER THAN A try/except IN EACH IMPORTER. Two scripts here
 need `yalgo_core` today and more will later. Two copies of the same error text
-drift apart, which is the defect class `spot_cost_model.py` was created to stop
-in P1 and the same reason `stats_utils.py` there is a shim rather than 57
-edited imports. The text exists once, here.
+drift apart. The same reasoning put the shared statistics code behind a shim
+in the options-research repository this line grew out of, rather than editing
+every import site. The text exists once, here.
 
 Importers do:
 
